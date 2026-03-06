@@ -8,7 +8,13 @@
 </head>
 <body>
 <div class="container">
-    <h1>Welcome, <span id="userName"></span></h1>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>Welcome, <span id="userName"></span></h1>
+        <button id="logoutBtn">Logout</button>
+    </div>
+
+    <p class="welcome-message">Hello <span id="userName"></span>! Thank you for using FinBridge – your secure financial assistant.</p>
+
     <h2 id="balance">Balance: 0</h2>
 
     <div class="wallet-section">
@@ -34,12 +40,19 @@
             <tr><th>Sender</th><th>Receiver</th><th>Amount</th><th>Date</th></tr>
         </table>
     </div>
+
+    <p class="footer-message">Developed by <strong>Scurd Sammy</strong>, vision: improving financial systems worldwide.</p>
 </div>
+
 <script src="script.js"></script>
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "41.index.html";
     document.getElementById("userName").innerText = localStorage.getItem("name");
     getWalletBalance();
     getTransactions();
+});
 </script>
 </body>
 </html>
