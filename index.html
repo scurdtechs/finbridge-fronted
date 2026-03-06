@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinBridge - Premium Digital Wallet</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- AUTH SECTION -->
+<section id="authSection" class="centered-section">
+    <div class="auth-container">
+        <h1>FinBridge</h1>
+        <p>Secure digital wallet & money transfers</p>
+
+        <div class="forms">
+            <!-- REGISTER FORM -->
+            <form id="registerForm" class="auth-form">
+                <h2>Register</h2>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="text" id="regPhone" placeholder="Phone Number" required>
+                <input type="password" id="regPassword" placeholder="Password" required>
+                <button type="submit" class="btn">Register</button>
+            </form>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form">
+                <h2>Login</h2>
+                <input type="text" id="loginPhone" placeholder="Phone Number" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- DASHBOARD SECTION -->
+<section id="dashboardSection" class="dashboard-section" style="display:none;">
+    <header>
+        <h1 id="welcomeUser">Welcome, User</h1>
+    </header>
+
+    <div class="wallet-card">
+        <h2>Wallet Balance</h2>
+        <p>KES <span id="balance">0.00</span></p>
+    </div>
+
+    <div class="forms-container">
+        <!-- DEPOSIT FORM -->
+        <form id="depositForm" class="wallet-form">
+            <h3>Deposit Money</h3>
+            <input type="number" id="depositAmount" placeholder="Amount (KES)" required>
+            <button type="submit" class="btn btn-success">Deposit</button>
+        </form>
+
+        <!-- SEND MONEY FORM -->
+        <form id="sendForm" class="wallet-form">
+            <h3>Send Money</h3>
+            <input type="text" id="sendPhone" placeholder="Receiver Phone Number" required>
+            <input type="number" id="sendAmount" placeholder="Amount (KES)" required>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+
+    <!-- TRANSACTIONS HISTORY -->
+    <div class="transactions-container">
+        <h3>Transaction History</h3>
+        <ul id="transactions"></ul>
+    </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
