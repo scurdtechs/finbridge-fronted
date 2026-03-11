@@ -1,19 +1,17 @@
-// Base URL of live backend
+// ===================== BASE URL =====================
 const BASE_URL = "https://finbridge-backened-elwl-3wwml2qjw-scurd142-glitchs-projects.vercel.app";
 
-// ---------- ALERT FUNCTION ----------
+// ===================== ALERT FUNCTION =====================
 function showAlert(message, type = "success") {
     const alertDiv = document.createElement("div");
     alertDiv.className = `alert alert-${type}`;
     alertDiv.innerText = message;
     document.body.prepend(alertDiv);
 
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 3000);
+    setTimeout(() => alertDiv.remove(), 3000);
 }
 
-// ---------- REGISTER ----------
+// ===================== REGISTER =====================
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
@@ -38,7 +36,7 @@ if (registerForm) {
                 showAlert(data.message, "success");
                 registerForm.reset();
             } else {
-                showAlert(data.message, "error");
+                showAlert(data.message || "Registration failed", "error");
             }
 
         } catch (err) {
@@ -48,7 +46,7 @@ if (registerForm) {
     });
 }
 
-// ---------- LOGIN ----------
+// ===================== LOGIN =====================
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -72,7 +70,7 @@ if (loginForm) {
                 localStorage.setItem("name", data.name);
                 window.location.href = "dashboard.html";
             } else {
-                showAlert(data.message, "error");
+                showAlert(data.message || "Login failed", "error");
             }
 
         } catch (err) {
@@ -82,7 +80,7 @@ if (loginForm) {
     });
 }
 
-// ---------- REQUIRE LOGIN ----------
+// ===================== REQUIRE LOGIN =====================
 function requireLogin() {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -92,7 +90,7 @@ function requireLogin() {
     return true;
 }
 
-// ---------- GET BALANCE ----------
+// ===================== GET BALANCE =====================
 async function getWalletBalance() {
     if (!requireLogin()) return;
 
@@ -113,7 +111,7 @@ async function getWalletBalance() {
     }
 }
 
-// ---------- DEPOSIT ----------
+// ===================== DEPOSIT =====================
 const depositForm = document.getElementById("depositForm");
 
 if (depositForm) {
@@ -138,7 +136,7 @@ if (depositForm) {
                 getWalletBalance();
                 getTransactions();
             } else {
-                showAlert(data.message, "error");
+                showAlert(data.message || "Deposit failed", "error");
             }
 
         } catch (err) {
@@ -148,7 +146,7 @@ if (depositForm) {
     });
 }
 
-// ---------- SEND MONEY ----------
+// ===================== SEND MONEY =====================
 const sendForm = document.getElementById("sendForm");
 
 if (sendForm) {
@@ -175,7 +173,7 @@ if (sendForm) {
                 getWalletBalance();
                 getTransactions();
             } else {
-                showAlert(data.message, "error");
+                showAlert(data.message || "Transaction failed", "error");
             }
 
         } catch (err) {
@@ -185,7 +183,7 @@ if (sendForm) {
     });
 }
 
-// ---------- TRANSACTIONS ----------
+// ===================== TRANSACTIONS =====================
 async function getTransactions() {
     if (!requireLogin()) return;
 
@@ -222,7 +220,7 @@ async function getTransactions() {
     }
 }
 
-// ---------- LOGOUT ----------
+// ===================== LOGOUT =====================
 const logoutBtn = document.getElementById("logoutBtn");
 
 if (logoutBtn) {
