@@ -2,31 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FinBridge | Login/Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinBridge - Login / Register</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>FinBridge</h1>
 
-<h1>FinBridge</h1>
+    <div class="form-container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="text" id="regName" placeholder="Name" required>
+            <input type="email" id="regEmail" placeholder="Email" required>
+            <input type="text" id="regPhone" placeholder="Phone" required>
+            <input type="password" id="regPassword" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
 
-<!-- REGISTER FORM -->
-<h2>Register</h2>
-<form id="registerForm">
-    <input type="text" id="regName" placeholder="Name" required>
-    <input type="email" id="regEmail" placeholder="Email" required>
-    <input type="text" id="regPhone" placeholder="Phone" required>
-    <input type="password" id="regPassword" placeholder="Password" required>
-    <button type="submit">Register</button>
-</form>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="loginPhone" placeholder="Phone" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
-<!-- LOGIN FORM -->
-<h2>Login</h2>
-<form id="loginForm">
-    <input type="text" id="loginPhone" placeholder="Phone" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <button type="submit">Login</button>
-</form>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

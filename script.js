@@ -1,195 +1,402 @@
+// ================================
+// BACKEND URL (YOUR VERCEL SERVER)
+// ================================
 const BASE_URL = "https://finbridge-backened-elwl-3wwml2qjw-scurd142-glitchs-projects.vercel.app";
 
-// Alert function
+
+// ================================
+// SHOW ALERT MESSAGE
+// ================================
 function showAlert(message, type = "success") {
-    const alertDiv = document.createElement("div");
-    alertDiv.className = `alert alert-${type}`;
-    alertDiv.innerText = message;
-    document.body.prepend(alertDiv);
-    setTimeout(() => alertDiv.remove(), 3000);
+
+    const alert = document.createElement("div");
+    alert.className = "alert alert-" + type;
+    alert.innerText = message;
+
+    document.body.prepend(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
 }
 
-// REGISTER
+
+
+// ================================
+// REGISTER USER
+// ================================
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
-    registerForm.addEventListener("submit", async e => {
+
+    registerForm.addEventListener("submit", async (e) => {
+
         e.preventDefault();
+
         const name = document.getElementById("regName").value;
         const email = document.getElementById("regEmail").value;
         const phone = document.getElementById("regPhone").value;
         const password = document.getElementById("regPassword").value;
 
         try {
-            const res = await fetch(`${BASE_URL}/api/users/register`, {
+
+            const response = await fetch(BASE_URL + "/api/users/register", {
+
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, phone, password })
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name,
+                    email,
+                    phone,
+                    password
+                })
+
             });
-            const data = await res.json();
-            if (res.ok) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+
                 showAlert(data.message, "success");
                 registerForm.reset();
+
             } else {
-                showAlert(data.message || "Registration failed", "error");
+
+                showAlert(data.message, "error");
+
             }
-        } catch (err) {
-            console.error(err);
+
+        } catch (error) {
+
             showAlert("Registration failed", "error");
+
         }
+
     });
+
 }
 
-// LOGIN
+
+
+// ================================
+// LOGIN USER
+// ================================
 const loginForm = document.getElementById("loginForm");
+
 if (loginForm) {
-    loginForm.addEventListener("submit", async e => {
+
+    loginForm.addEventListener("submit", async (e) => {
+
         e.preventDefault();
+
         const phone = document.getElementById("loginPhone").value;
         const password = document.getElementById("loginPassword").value;
 
         try {
-            const res = await fetch(`${BASE_URL}/api/users/login`, {
+
+            const response = await fetch(BASE_URL + "/api/users/login", {
+
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone, password })
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    phone,
+                    password
+                })
+
             });
-            const data = await res.json();
-            if (res.ok) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("name", data.name);
+
                 window.location.href = "dashboard.html";
+
             } else {
-                showAlert(data.message || "Login failed", "error");
+
+                showAlert(data.message, "error");
+
             }
-        } catch (err) {
-            console.error(err);
+
+        } catch (error) {
+
             showAlert("Login failed", "error");
+
         }
+
     });
+
 }
 
-// REQUIRE LOGIN
+
+
+// ================================
+// CHECK LOGIN
+// ================================
 function requireLogin() {
+
     const token = localStorage.getItem("token");
+
     if (!token) {
+
         window.location.href = "index.html";
         return false;
+
     }
+
     return true;
+
 }
 
-// GET BALANCE
-async function getWalletBalance() {
+
+
+// ================================
+// GET WALLET BALANCE
+// ================================
+async function getBalance() {
+
     if (!requireLogin()) return;
-    const token = localStorage.getItem("token");
+
     try {
-        const res = await fetch(`${BASE_URL}/api/users/balance`, { headers: { Authorization: token } });
-        const data = await res.json();
-        const balanceEl = document.getElementById("balance");
-        if (balanceEl) balanceEl.innerText = "Balance: KES " + data.balance;
-    } catch (err) {
-        console.error(err);
+
+        const response = await fetch(BASE_URL + "/api/users/balance", {
+
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+
+        });
+
+        const data = await response.json();
+
+        const balanceElement = document.getElementById("balance");
+
+        if (balanceElement) {
+
+            balanceElement.innerText = "Balance: KES " + data.balance;
+
+        }
+
+    } catch (error) {
+
         showAlert("Failed to load balance", "error");
+
     }
+
 }
 
-// DEPOSIT
+
+
+// ================================
+// DEPOSIT MONEY
+// ================================
 const depositForm = document.getElementById("depositForm");
+
 if (depositForm) {
-    depositForm.addEventListener("submit", async e => {
+
+    depositForm.addEventListener("submit", async (e) => {
+
         e.preventDefault();
+
         const amount = document.getElementById("depositAmount").value;
-        const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`${BASE_URL}/api/deposit`, {
+
+            const response = await fetch(BASE_URL + "/api/deposit", {
+
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: token },
-                body: JSON.stringify({ amount: Number(amount) })
+
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("token")
+                },
+
+                body: JSON.stringify({
+                    amount: Number(amount)
+                })
+
             });
-            const data = await res.json();
-            if (res.ok) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+
                 showAlert(data.message, "success");
+
                 document.getElementById("depositAmount").value = "";
-                getWalletBalance();
+
+                getBalance();
                 getTransactions();
+
             } else {
-                showAlert(data.message || "Deposit failed", "error");
+
+                showAlert(data.message, "error");
+
             }
-        } catch (err) {
-            console.error(err);
+
+        } catch (error) {
+
             showAlert("Deposit failed", "error");
+
         }
+
     });
+
 }
 
+
+
+// ================================
 // SEND MONEY
+// ================================
 const sendForm = document.getElementById("sendForm");
+
 if (sendForm) {
-    sendForm.addEventListener("submit", async e => {
+
+    sendForm.addEventListener("submit", async (e) => {
+
         e.preventDefault();
+
         const receiverPhone = document.getElementById("receiverPhone").value;
         const amount = document.getElementById("sendAmount").value;
-        const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`${BASE_URL}/api/send`, {
+
+            const response = await fetch(BASE_URL + "/api/send", {
+
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: token },
-                body: JSON.stringify({ receiverPhone, amount: Number(amount) })
+
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("token")
+                },
+
+                body: JSON.stringify({
+                    receiverPhone,
+                    amount: Number(amount)
+                })
+
             });
-            const data = await res.json();
-            if (res.ok) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+
                 showAlert(data.message, "success");
+
                 document.getElementById("receiverPhone").value = "";
                 document.getElementById("sendAmount").value = "";
-                getWalletBalance();
+
+                getBalance();
                 getTransactions();
+
             } else {
-                showAlert(data.message || "Transaction failed", "error");
+
+                showAlert(data.message, "error");
+
             }
-        } catch (err) {
-            console.error(err);
+
+        } catch (error) {
+
             showAlert("Transaction failed", "error");
+
         }
+
     });
+
 }
 
-// TRANSACTIONS
+
+
+// ================================
+// GET TRANSACTIONS
+// ================================
 async function getTransactions() {
+
     if (!requireLogin()) return;
-    const token = localStorage.getItem("token");
 
     try {
-        const res = await fetch(`${BASE_URL}/api/transactions`, { headers: { Authorization: token } });
-        const txs = await res.json();
+
+        const response = await fetch(BASE_URL + "/api/transactions", {
+
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+
+        });
+
+        const transactions = await response.json();
+
         const table = document.getElementById("transactionTable");
+
         if (!table) return;
-        table.innerHTML = `<tr>
-            <th>Sender</th>
-            <th>Receiver</th>
-            <th>Amount</th>
-            <th>Date</th>
-        </tr>`;
-        txs.forEach(tx => {
+
+        table.innerHTML = `
+        <tr>
+        <th>Sender</th>
+        <th>Receiver</th>
+        <th>Amount</th>
+        <th>Date</th>
+        </tr>
+        `;
+
+        transactions.forEach(tx => {
+
             const row = table.insertRow();
+
             row.insertCell(0).innerText = tx.senderPhone;
             row.insertCell(1).innerText = tx.receiverPhone;
-            row.insertCell(2).innerText = tx.amount;
+            row.insertCell(2).innerText = "KES " + tx.amount;
             row.insertCell(3).innerText = new Date(tx.date).toLocaleString();
+
         });
-    } catch (err) {
-        console.error(err);
-        showAlert("Failed to fetch transactions", "error");
+
+    } catch (error) {
+
+        showAlert("Failed to load transactions", "error");
+
     }
+
 }
 
+
+
+// ================================
 // LOGOUT
+// ================================
 const logoutBtn = document.getElementById("logoutBtn");
+
 if (logoutBtn) {
+
     logoutBtn.addEventListener("click", () => {
+
         localStorage.removeItem("token");
         localStorage.removeItem("name");
+
         window.location.href = "index.html";
+
     });
+
+}
+
+
+
+// ================================
+// INITIALIZE DASHBOARD
+// ================================
+if (document.getElementById("balance")) {
+
+    getBalance();
+    getTransactions();
+
 }
