@@ -1,53 +1,65 @@
-const API_BASE = "https://finbridge-backened.onrender.com";
+// Base URL of live backend
+const BASE_URL = "https://finbridge-backened-elwl-3wwml2qjw-scurd142-glitchs-projects.vercel.app";
 
-// ---------- ALERT ----------
+// ---------- ALERT FUNCTION ----------
 function showAlert(message, type = "success") {
     const alertDiv = document.createElement("div");
     alertDiv.className = `alert alert-${type}`;
     alertDiv.innerText = message;
     document.body.prepend(alertDiv);
-    setTimeout(() => alertDiv.remove(), 3000);
+
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
 }
 
 // ---------- REGISTER ----------
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
-    registerForm.addEventListener("submit", async e => {
+    registerForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+
         const name = document.getElementById("regName").value;
         const email = document.getElementById("regEmail").value;
         const phone = document.getElementById("regPhone").value;
         const password = document.getElementById("regPassword").value;
 
         try {
-            const res = await fetch(`${API_BASE}/api/users/register`, {
+            const res = await fetch(`${BASE_URL}/api/users/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, phone, password })
             });
 
             const data = await res.json();
-            showAlert(data.message, res.ok ? "success" : "error");
-            if (res.ok) registerForm.reset();
+
+            if (res.ok) {
+                showAlert(data.message, "success");
+                registerForm.reset();
+            } else {
+                showAlert(data.message, "error");
+            }
 
         } catch (err) {
-            showAlert("Registration failed", "error");
             console.error(err);
+            showAlert("Registration failed", "error");
         }
     });
 }
 
 // ---------- LOGIN ----------
 const loginForm = document.getElementById("loginForm");
+
 if (loginForm) {
-    loginForm.addEventListener("submit", async e => {
+    loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const phone = document.getElementById("loginPhone").value;
         const password = document.getElementById("loginPassword").value;
 
         try {
-            const res = await fetch(`${API_BASE}/api/users/login`, {
+            const res = await fetch(`${BASE_URL}/api/users/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ phone, password })
@@ -55,153 +67,137 @@ if (loginForm) {
 
             const data = await res.json();
 
-            if (res.ok && data.token) {
+            if (res.ok) {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("name", data.name);
                 window.location.href = "dashboard.html";
             } else {
-                showAlert(data.message || "Invalid credentials", "error");
+                showAlert(data.message, "error");
             }
 
         } catch (err) {
-            showAlert("Login failed", "error");
             console.error(err);
+            showAlert("Login failed", "error");
         }
     });
 }
 
-// ---------- LOGOUT ----------
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("name");
-        window.location.href = "41.index.html";
-    });
-}
-
-// ---------- AUTH ----------
+// ---------- REQUIRE LOGIN ----------
 function requireLogin() {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "41.index.html";
+        window.location.href = "index.html";
         return false;
     }
     return true;
 }
 
-// ---------- WALLET ----------
+// ---------- GET BALANCE ----------
 async function getWalletBalance() {
     if (!requireLogin()) return;
 
     const token = localStorage.getItem("token");
 
     try {
-        const res = await fetch(`${API_BASE}/api/users/${token}`, {
+        const res = await fetch(`${BASE_URL}/api/users/balance`, {
             headers: { Authorization: token }
         });
 
         const data = await res.json();
-        document.getElementById("balance").innerText = `Balance: KES ${data.balance}`;
+        const balanceEl = document.getElementById("balance");
+        if (balanceEl) balanceEl.innerText = "Balance: KES " + data.balance;
 
     } catch (err) {
-        showAlert("Failed to fetch balance", "error");
         console.error(err);
+        showAlert("Failed to load balance", "error");
     }
 }
 
 // ---------- DEPOSIT ----------
 const depositForm = document.getElementById("depositForm");
 
-if (depositForm) depositForm.addEventListener("submit", async e => {
-    e.preventDefault();
+if (depositForm) {
+    depositForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    if (!requireLogin()) return;
+        const amount = document.getElementById("depositAmount").value;
+        const token = localStorage.getItem("token");
 
-    const amount = parseInt(document.getElementById("depositAmount").value);
-    const token = localStorage.getItem("token");
+        try {
+            const res = await fetch(`${BASE_URL}/api/deposit`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: token },
+                body: JSON.stringify({ amount: Number(amount) })
+            });
 
-    try {
-        const res = await fetch(`${API_BASE}/api/deposit`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: token
-            },
-            body: JSON.stringify({ amount })
-        });
+            const data = await res.json();
 
-        const data = await res.json();
+            if (res.ok) {
+                showAlert(data.message, "success");
+                document.getElementById("depositAmount").value = "";
+                getWalletBalance();
+                getTransactions();
+            } else {
+                showAlert(data.message, "error");
+            }
 
-        showAlert(data.message, res.ok ? "success" : "error");
-
-        if (res.ok) {
-            document.getElementById("depositAmount").value = "";
-            getWalletBalance();
-            getTransactions();
+        } catch (err) {
+            console.error(err);
+            showAlert("Deposit failed", "error");
         }
-
-    } catch (err) {
-        showAlert("Deposit failed", "error");
-        console.error(err);
-    }
-});
+    });
+}
 
 // ---------- SEND MONEY ----------
 const sendForm = document.getElementById("sendForm");
 
-if (sendForm) sendForm.addEventListener("submit", async e => {
-    e.preventDefault();
+if (sendForm) {
+    sendForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    if (!requireLogin()) return;
+        const receiverPhone = document.getElementById("receiverPhone").value;
+        const amount = document.getElementById("sendAmount").value;
+        const token = localStorage.getItem("token");
 
-    const receiverPhone = document.getElementById("receiverPhone").value;
-    const amount = parseInt(document.getElementById("sendAmount").value);
-    const token = localStorage.getItem("token");
+        try {
+            const res = await fetch(`${BASE_URL}/api/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: token },
+                body: JSON.stringify({ receiverPhone, amount: Number(amount) })
+            });
 
-    try {
-        const res = await fetch(`${API_BASE}/api/send`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: token
-            },
-            body: JSON.stringify({ receiverPhone, amount })
-        });
+            const data = await res.json();
 
-        const data = await res.json();
+            if (res.ok) {
+                showAlert(data.message, "success");
+                document.getElementById("receiverPhone").value = "";
+                document.getElementById("sendAmount").value = "";
+                getWalletBalance();
+                getTransactions();
+            } else {
+                showAlert(data.message, "error");
+            }
 
-        showAlert(data.message, res.ok ? "success" : "error");
-
-        if (res.ok) {
-            document.getElementById("receiverPhone").value = "";
-            document.getElementById("sendAmount").value = "";
-            getWalletBalance();
-            getTransactions();
+        } catch (err) {
+            console.error(err);
+            showAlert("Transaction failed", "error");
         }
-
-    } catch (err) {
-        showAlert("Send money failed", "error");
-        console.error(err);
-    }
-});
+    });
+}
 
 // ---------- TRANSACTIONS ----------
 async function getTransactions() {
-
     if (!requireLogin()) return;
 
     const token = localStorage.getItem("token");
 
     try {
-        const res = await fetch(`${API_BASE}/api/transactions`, {
+        const res = await fetch(`${BASE_URL}/api/transactions`, {
             headers: { Authorization: token }
         });
 
         const txs = await res.json();
-
         const table = document.getElementById("transactionTable");
-
         if (!table) return;
 
         table.innerHTML = `
@@ -221,7 +217,18 @@ async function getTransactions() {
         });
 
     } catch (err) {
-        showAlert("Failed to fetch transactions", "error");
         console.error(err);
+        showAlert("Failed to fetch transactions", "error");
     }
+}
+
+// ---------- LOGOUT ----------
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("name");
+        window.location.href = "index.html";
+    });
 }
