@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Dashboard</h1>
+    <p class="developer-tag">Developed by Scurd Sammy</p>
     <button id="logoutBtn">Logout</button>
 
     <h2 id="balance">Balance: KES 0</h2>
@@ -25,10 +26,33 @@
             <input type="number" id="sendAmount" placeholder="Amount" required>
             <button type="submit">Send</button>
         </form>
+
+        <h3>Loan Request</h3>
+        <form id="loanForm">
+            <input type="number" id="loanAmount" placeholder="Loan Amount" required>
+            <button type="submit">Request Loan</button>
+        </form>
+
+        <h3>Savings Goals</h3>
+        <form id="goalForm">
+            <input type="text" id="goalName" placeholder="Goal Name" required>
+            <input type="number" id="goalAmount" placeholder="Target Amount" required>
+            <button type="submit">Add Goal</button>
+        </form>
+
+        <h3>Mini-Game: Click the Blue Button!</h3>
+        <button id="gameBtn">Click Me!</button>
+        <p>Points: <span id="gamePoints">0</span></p>
     </div>
 
     <h3>Transactions</h3>
     <table id="transactionTable"></table>
+
+    <h3>Savings Goals</h3>
+    <table id="goalTable"></table>
+
+    <h3>Leaderboard</h3>
+    <table id="leaderboardTable"></table>
 
     <script src="script.js"></script>
 </body>
