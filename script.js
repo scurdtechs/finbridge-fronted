@@ -1,7 +1,8 @@
 // ================================
-// BACKEND URL (LOCAL SERVER)
+// BACKEND URL (LIVE SERVER)
 // ================================
-const BASE_URL = "http://127.0.0.1:3000";
+// Live backend deployed on Vercel
+const BASE_URL = "https://finbridge-backened-3v1r.vercel.app";
 
 // ================================
 // SHOW ALERT MESSAGE
