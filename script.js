@@ -2,7 +2,7 @@
 // BACKEND URL (LIVE SERVER)
 // ================================
 // Live backend deployed on Vercel
-const BASE_URL = "https://finbridge-backened-3v1r.vercel.app";
+const BASE_URL = "https://finbridge-backened-6x4h.vercel.app";
 
 // ================================
 // SHOW ALERT MESSAGE
