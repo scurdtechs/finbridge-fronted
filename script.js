@@ -2,7 +2,7 @@
 // This script is used by index.html, register.html, and dashboard.html.
 
 // Deployed backend base (frontend may be served from a different origin)
-const API_BASE = "https://finbridge-backened-q54i.vercel.app";
+const API_BASE = "http://localhost:3000";
 
 const token = localStorage.getItem("token");
 
